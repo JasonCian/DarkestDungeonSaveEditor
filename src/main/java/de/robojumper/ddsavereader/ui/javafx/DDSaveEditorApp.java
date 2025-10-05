@@ -36,7 +36,11 @@ public class DDSaveEditorApp extends Application {
             Scene scene = new Scene(root, 1200, 800);
             
             // 加载CSS样式
-            scene.getStylesheets().add(getClass().getResource("/css/application.css").toExternalForm());
+            try {
+                scene.getStylesheets().add(getClass().getResource("/css/enhanced-editor.css").toExternalForm());
+            } catch (Exception e) {
+                System.out.println("CSS文件未找到，使用默认样式");
+            }
             
             // 设置窗口属性
             primaryStage.setTitle(BuildConfig.DISPLAY_NAME + " " + BuildConfig.VERSION);

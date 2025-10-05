@@ -38,51 +38,63 @@ import java.util.ResourceBundle;
  * 提供现代化的用户界面和更好的用户体验
  */
 public class MainWindowController implements Initializable {
-    
-    @FXML private VBox root;
-    @FXML private MenuBar menuBar;
-    @FXML private Menu fileMenu, toolsMenu, helpMenu;
-    @FXML private MenuItem exitMenuItem, openBackupDirMenuItem, generateNamesMenuItem;
-    @FXML private MenuItem spreadsheetsMenuItem, languageMenuItem, aboutMenuItem, saveEditorMenuItem;
-    
-    @FXML private TextField savePathField;
-    @FXML private Button browseSavePathButton, makeBackupButton, restoreBackupButton;
-    @FXML private Label saveFileStatusLabel;
-    
-    @FXML private TabPane fileTabPane;
-    @FXML private Button discardChangesButton, saveAllButton, reloadAllButton;
-    @FXML private Label errorLabel, saveStatusLabel;
-    @FXML private Button updateAvailableButton;
-    
+
+    @FXML
+    private VBox root;
+    @FXML
+    private MenuBar menuBar;
+    @FXML
+    private Menu fileMenu, toolsMenu, helpMenu;
+    @FXML
+    private MenuItem exitMenuItem, openBackupDirMenuItem, generateNamesMenuItem;
+    @FXML
+    private MenuItem spreadsheetsMenuItem, languageMenuItem, aboutMenuItem, saveEditorMenuItem;
+
+    @FXML
+    private TextField savePathField;
+    @FXML
+    private Button browseSavePathButton, makeBackupButton, restoreBackupButton;
+    @FXML
+    private Label saveFileStatusLabel;
+
+    @FXML
+    private TabPane fileTabPane;
+    @FXML
+    private Button discardChangesButton, saveAllButton, reloadAllButton;
+    @FXML
+    private Label errorLabel, saveStatusLabel;
+    @FXML
+    private Button updateAvailableButton;
+
     private Stage primaryStage;
     private StateManager state = new StateManager();
-    
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setupComponents();
         initializeState();
         checkForUpdates();
     }
-    
+
     public void setPrimaryStage(Stage stage) {
         this.primaryStage = stage;
     }
-    
+
     private void setupComponents() {
         // 设置菜单项文本
         fileMenu.setText(Messages.getString("menu.file"));
         exitMenuItem.setText(Messages.getString("menu.file.exit"));
         openBackupDirMenuItem.setText(Messages.getString("menu.file.openBackupDirectory"));
-        
+
         toolsMenu.setText(Messages.getString("menu.tools"));
         generateNamesMenuItem.setText(Messages.getString("menu.tools.generateNameFile"));
         spreadsheetsMenuItem.setText(Messages.getString("menu.tools.spreadsheets"));
         saveEditorMenuItem.setText(Messages.getString("menu.tools.saveEditor"));
-        
+
         helpMenu.setText(Messages.getString("menu.help"));
         languageMenuItem.setText("Language / 语言");
         aboutMenuItem.setText(Messages.getString("menu.help.about"));
-        
+
         // 设置按钮和标签文本
         browseSavePathButton.setText(Messages.getString("button.browse"));
         makeBackupButton.setText(Messages.getString("button.makeBackup"));
@@ -91,30 +103,30 @@ public class MainWindowController implements Initializable {
         saveAllButton.setText(Messages.getString("button.saveAllChanges"));
         reloadAllButton.setText(Messages.getString("button.reloadAll"));
         updateAvailableButton.setText(Messages.getString("button.newUpdateAvailable"));
-        
+
         // 初始状态
         savePathField.setEditable(false);
         updateAvailableButton.setVisible(false);
         spreadsheetsMenuItem.setDisable(true);
-        
+
         // 绑定事件处理器
         setupEventHandlers();
     }
-    
+
     private void setupEventHandlers() {
         // 文件菜单事件
         exitMenuItem.setOnAction(this::handleExit);
         openBackupDirMenuItem.setOnAction(this::handleOpenBackupDirectory);
-        
+
         // 工具菜单事件
         generateNamesMenuItem.setOnAction(this::handleGenerateNames);
         spreadsheetsMenuItem.setOnAction(this::handleSpreadsheets);
         saveEditorMenuItem.setOnAction(this::handleSaveEditor);
-        
+
         // 帮助菜单事件
         languageMenuItem.setOnAction(this::handleLanguageSelection);
         aboutMenuItem.setOnAction(this::handleAbout);
-        
+
         // 按钮事件
         browseSavePathButton.setOnAction(this::handleBrowseSavePath);
         makeBackupButton.setOnAction(this::handleMakeBackup);
@@ -123,44 +135,44 @@ public class MainWindowController implements Initializable {
         saveAllButton.setOnAction(this::handleSaveAll);
         reloadAllButton.setOnAction(this::handleReloadAll);
         updateAvailableButton.setOnAction(this::handleUpdateAvailable);
-        
+
         // Tab切换事件
         fileTabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> {
             updateSaveStatus();
         });
     }
-    
+
     private void initializeState() {
         state.init(this::onStateChange);
-        
+
         // 如果是首次运行，显示数据路径对话框
         if (!state.sawGameDataPopup()) {
             showDataPathsDialog(true);
             state.setSawGameDataPopup(true);
         }
-        
+
         updateSaveDirectory();
         updateFiles();
         updateSaveStatus();
     }
-    
+
     private void onStateChange(String fileName) {
         Platform.runLater(() -> {
             updateSaveStatus();
             updateTabStatus(fileName);
         });
     }
-    
+
     // 事件处理方法
     @FXML
     private void handleExit(ActionEvent event) {
         handleExitEvent(null);
     }
-    
+
     public void handleExit(WindowEvent event) {
         handleExitEvent(event);
     }
-    
+
     private void handleExitEvent(WindowEvent event) {
         if (confirmLoseChanges()) {
             state.save();
@@ -169,7 +181,7 @@ public class MainWindowController implements Initializable {
             event.consume(); // 阻止窗口关闭
         }
     }
-    
+
     private void handleOpenBackupDirectory(ActionEvent event) {
         try {
             java.awt.Desktop.getDesktop().open(new File(state.getBackupPath()));
@@ -177,12 +189,12 @@ public class MainWindowController implements Initializable {
             showError("Error opening backup directory", e.getMessage());
         }
     }
-    
+
     private void handleBrowseSavePath(ActionEvent event) {
         if (confirmLoseChanges()) {
             DirectoryChooser chooser = new DirectoryChooser();
             chooser.setTitle(Messages.getString("dialog.chooseSaveDirectory"));
-            
+
             String currentDir = state.getSaveDir();
             if (currentDir != null && !currentDir.isEmpty()) {
                 File initial = new File(currentDir);
@@ -190,7 +202,7 @@ public class MainWindowController implements Initializable {
                     chooser.setInitialDirectory(initial);
                 }
             }
-            
+
             File selectedDir = chooser.showDialog(primaryStage);
             if (selectedDir != null) {
                 state.setSaveDir(selectedDir.getAbsolutePath());
@@ -199,15 +211,15 @@ public class MainWindowController implements Initializable {
             }
         }
     }
-    
+
     private void handleMakeBackup(ActionEvent event) {
         if (state.getSaveStatus() != Status.ERROR) {
             TextInputDialog dialog = new TextInputDialog(
-                new java.text.SimpleDateFormat("yyyyMMdd-HHmmss").format(new java.util.Date()));
+                    new java.text.SimpleDateFormat("yyyyMMdd-HHmmss").format(new java.util.Date()));
             dialog.setTitle(Messages.getString("dialog.chooseBackupName"));
             dialog.setHeaderText(Messages.getString("dialog.chooseBackupName"));
             dialog.setContentText("Backup name:");
-            
+
             Optional<String> result = dialog.showAndWait();
             result.ifPresent(name -> {
                 String cleanName = name.replaceAll("[:\\\\/*?|<>]", "_");
@@ -215,7 +227,7 @@ public class MainWindowController implements Initializable {
                     Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
                     confirmDialog.setTitle(Messages.getString("dialog.backupAlreadyExistsTitle"));
                     confirmDialog.setHeaderText(Messages.getString("dialog.backupAlreadyExists", cleanName));
-                    
+
                     Optional<ButtonType> confirmResult = confirmDialog.showAndWait();
                     if (confirmResult.isPresent() && confirmResult.get() != ButtonType.OK) {
                         return;
@@ -226,7 +238,7 @@ public class MainWindowController implements Initializable {
             });
         }
     }
-    
+
     private void handleRestoreBackup(ActionEvent event) {
         if (state.getSaveStatus() != Status.ERROR && state.hasAnyBackups() && confirmLoseChanges()) {
             ChoiceDialog<String> dialog = new ChoiceDialog<>();
@@ -234,7 +246,7 @@ public class MainWindowController implements Initializable {
             dialog.setSelectedItem(dialog.getItems().get(0));
             dialog.setTitle(Messages.getString("dialog.restoreBackupTitle"));
             dialog.setHeaderText(Messages.getString("dialog.restoreBackup"));
-            
+
             Optional<String> result = dialog.showAndWait();
             result.ifPresent(backup -> {
                 try {
@@ -253,13 +265,13 @@ public class MainWindowController implements Initializable {
             });
         }
     }
-    
+
     private void handleDiscardChanges(ActionEvent event) {
         Tab selectedTab = fileTabPane.getSelectionModel().getSelectedItem();
         if (selectedTab != null && selectedTab.getUserData() instanceof String) {
             String fileName = (String) selectedTab.getUserData();
             SaveFile saveFile = state.getSaveFile(fileName);
-            
+
             // 找到对应的CodeArea并重置内容
             if (selectedTab.getContent() instanceof ScrollPane) {
                 ScrollPane scrollPane = (ScrollPane) selectedTab.getContent();
@@ -271,7 +283,7 @@ public class MainWindowController implements Initializable {
             }
         }
     }
-    
+
     private void handleSaveAll(ActionEvent event) {
         if (state.canSave()) {
             // 在后台线程中保存
@@ -281,7 +293,7 @@ public class MainWindowController implements Initializable {
                     state.saveChanges();
                     return null;
                 }
-                
+
                 @Override
                 protected void succeeded() {
                     Platform.runLater(() -> {
@@ -289,7 +301,7 @@ public class MainWindowController implements Initializable {
                         updateFiles();
                     });
                 }
-                
+
                 @Override
                 protected void failed() {
                     Platform.runLater(() -> {
@@ -297,18 +309,18 @@ public class MainWindowController implements Initializable {
                     });
                 }
             };
-            
+
             new Thread(saveTask).start();
         }
     }
-    
+
     private void handleReloadAll(ActionEvent event) {
         if (confirmLoseChanges()) {
             state.loadFiles();
             updateFiles();
         }
     }
-    
+
     private void handleGenerateNames(ActionEvent event) {
         if (confirmLoseChanges()) {
             showDataPathsDialog(false);
@@ -316,7 +328,7 @@ public class MainWindowController implements Initializable {
             updateFiles();
         }
     }
-    
+
     private void handleSpreadsheets(ActionEvent event) {
         if (state.getSaveStatus() != Status.ERROR) {
             SpreadsheetsUtil.showSpreadsheetsDialog(state);
@@ -324,30 +336,31 @@ public class MainWindowController implements Initializable {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle(Messages.getString("error.title", "Error"));
             alert.setHeaderText(Messages.getString("error.cannotUseSpreadsheets", "Cannot use spreadsheets"));
-            alert.setContentText(Messages.getString("error.fixSaveErrorsFirst", "Please fix save file errors before using spreadsheets."));
+            alert.setContentText(Messages.getString("error.fixSaveErrorsFirst",
+                    "Please fix save file errors before using spreadsheets."));
             alert.showAndWait();
         }
     }
-    
+
     private void handleSaveEditor(ActionEvent event) {
         try {
             // 创建修复版智能存档编辑器
             FixedSmartSaveEditorDialog controller = new FixedSmartSaveEditorDialog();
-            
+
             // 初始化控制器
             controller.initialize(null, null);
-            
+
             // 创建新窗口
             Stage dialogStage = controller.createDialog();
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(primaryStage);
-            
+
             // 设置状态管理器
             controller.setState(state);
-            
+
             // 显示对话框
             dialogStage.showAndWait();
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -357,7 +370,7 @@ public class MainWindowController implements Initializable {
             alert.showAndWait();
         }
     }
-    
+
     private void handleLanguageSelection(ActionEvent event) {
         LanguageSelectionDialog dialog = new LanguageSelectionDialog(primaryStage);
         if (dialog.showAndWait()) {
@@ -369,42 +382,42 @@ public class MainWindowController implements Initializable {
             alert.showAndWait();
         }
     }
-    
+
     private void handleAbout(ActionEvent event) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(Messages.getString("dialog.aboutTitle"));
         alert.setHeaderText(BuildConfig.DISPLAY_NAME);
-        alert.setContentText(String.format("Version: %s\nGitHub: %s", 
-            BuildConfig.VERSION, BuildConfig.GITHUB_URL));
+        alert.setContentText(String.format("Version: %s\nGitHub: %s",
+                BuildConfig.VERSION, BuildConfig.GITHUB_URL));
         alert.showAndWait();
     }
-    
+
     private void handleUpdateAvailable(ActionEvent event) {
         de.robojumper.ddsavereader.updatechecker.UpdateChecker.Release release = UpdateCheckUtil.getLatestRelease();
         if (release != null) {
             UpdateCheckUtil.showUpdateAvailableDialog(release);
         }
     }
-    
+
     // 界面更新方法
     private void updateSaveDirectory() {
         savePathField.setText(state.getSaveDir());
         updateSaveStatus();
     }
-    
+
     private void updateFiles() {
         fileTabPane.getTabs().clear();
-        
+
         for (SaveFile file : state.getSaveFiles()) {
             Tab tab = new Tab();
             tab.setText((file.isChanged() ? "*" : "") + file.getName());
             tab.setUserData(file.getName());
-            
+
             // 创建代码编辑区域
             CodeArea codeArea = new CodeArea();
             codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
             codeArea.replaceText(file.getOriginalContents());
-            
+
             // 监听文本变化
             codeArea.textProperty().addListener((obs, oldText, newText) -> {
                 file.setContents(newText);
@@ -413,16 +426,16 @@ public class MainWindowController implements Initializable {
                     updateSaveStatus();
                 });
             });
-            
+
             ScrollPane scrollPane = new ScrollPane(codeArea);
             scrollPane.setFitToWidth(true);
             scrollPane.setFitToHeight(true);
             tab.setContent(scrollPane);
-            
+
             fileTabPane.getTabs().add(tab);
         }
     }
-    
+
     private void updateTabStatus(String fileName) {
         for (Tab tab : fileTabPane.getTabs()) {
             if (fileName.equals(tab.getUserData())) {
@@ -432,14 +445,14 @@ public class MainWindowController implements Initializable {
             }
         }
     }
-    
+
     private void updateSaveStatus() {
         boolean hasChanges = state.anyChanges();
         boolean canSave = state.canSave();
-        
+
         saveAllButton.setDisable(!canSave);
         discardChangesButton.setDisable(!hasChanges);
-        
+
         Tab selectedTab = fileTabPane.getSelectionModel().getSelectedItem();
         if (selectedTab != null && selectedTab.getUserData() instanceof String) {
             String fileName = (String) selectedTab.getUserData();
@@ -449,30 +462,32 @@ public class MainWindowController implements Initializable {
             errorLabel.setText("");
         }
     }
-    
+
     private void updateBackupButtons() {
         makeBackupButton.setDisable(state.getSaveStatus() == Status.ERROR);
         restoreBackupButton.setDisable(!state.hasAnyBackups());
     }
-    
+
     private String getColorForFile(SaveFile file) {
-        if (!file.canSaveFile()) return "red";
-        if (file.isChanged()) return "orange";
+        if (!file.canSaveFile())
+            return "red";
+        if (file.isChanged())
+            return "orange";
         return "black";
     }
-    
+
     private boolean confirmLoseChanges() {
         if (state.getNumUnsavedChanges() > 0) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle(Messages.getString("message.confirmLoseChangesTitle"));
             alert.setHeaderText(Messages.getString("message.confirmLoseChanges"));
-            
+
             Optional<ButtonType> result = alert.showAndWait();
             return result.isPresent() && result.get() == ButtonType.OK;
         }
         return true;
     }
-    
+
     private void checkForUpdates() {
         UpdateCheckUtil.checkForUpdatesSilently(new UpdateCheckUtil.UpdateCheckCallback() {
             @Override
@@ -482,12 +497,12 @@ public class MainWindowController implements Initializable {
                     updateAvailableButton.setText(Messages.getString("button.newUpdateAvailable", "Update Available"));
                 });
             }
-            
+
             @Override
             public void onNoUpdateAvailable() {
                 // 静默处理，不显示任何信息
             }
-            
+
             @Override
             public void onError(Exception e) {
                 // 静默处理错误，不影响用户体验
@@ -495,11 +510,11 @@ public class MainWindowController implements Initializable {
             }
         });
     }
-    
+
     private void showDataPathsDialog(boolean skipInsteadOfCancel) {
         DataPathsDialog.showDialog(primaryStage, state.getGameDir(), state.getModsDir(), state, skipInsteadOfCancel);
     }
-    
+
     private void showError(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
@@ -507,7 +522,7 @@ public class MainWindowController implements Initializable {
         alert.setContentText(message);
         alert.showAndWait();
     }
-    
+
     private void showInfo(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
