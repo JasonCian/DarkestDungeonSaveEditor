@@ -375,12 +375,46 @@ public class MainWindowController implements Initializable {
         LanguageSelectionDialog dialog = new LanguageSelectionDialog(primaryStage);
         if (dialog.showAndWait()) {
             dialog.saveLanguagePreference();
+            
+            // 刷新界面文本
+            refreshUITexts();
+            
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Language / 语言");
             alert.setHeaderText(null);
-            alert.setContentText("Language will be applied after restart.\n语言将在重启后生效。");
+            alert.setContentText("Language has been changed successfully!\n语言已成功更改！\n\nSome text may require restart to take effect.\n某些文本可能需要重启才能生效。");
             alert.showAndWait();
         }
+    }
+    
+    /**
+     * 刷新界面中的所有文本
+     */
+    private void refreshUITexts() {
+        // 重新设置菜单项文本
+        fileMenu.setText(Messages.getString("menu.file"));
+        exitMenuItem.setText(Messages.getString("menu.file.exit"));
+        openBackupDirMenuItem.setText(Messages.getString("menu.file.openBackupDirectory"));
+
+        toolsMenu.setText(Messages.getString("menu.tools"));
+        generateNamesMenuItem.setText(Messages.getString("menu.tools.generateNameFile"));
+        spreadsheetsMenuItem.setText(Messages.getString("menu.tools.spreadsheets"));
+        saveEditorMenuItem.setText(Messages.getString("menu.tools.saveEditor"));
+
+        helpMenu.setText(Messages.getString("menu.help"));
+        aboutMenuItem.setText(Messages.getString("menu.help.about"));
+
+        // 重新设置按钮和标签文本
+        browseSavePathButton.setText(Messages.getString("button.browse"));
+        makeBackupButton.setText(Messages.getString("button.makeBackup"));
+        restoreBackupButton.setText(Messages.getString("button.loadBackup"));
+        discardChangesButton.setText(Messages.getString("button.discardFileChanges"));
+        saveAllButton.setText(Messages.getString("button.saveAllChanges"));
+        reloadAllButton.setText(Messages.getString("button.reloadAll"));
+        updateAvailableButton.setText(Messages.getString("button.newUpdateAvailable"));
+        
+        // 刷新状态标签
+        updateSaveStatus();
     }
 
     private void handleAbout(ActionEvent event) {

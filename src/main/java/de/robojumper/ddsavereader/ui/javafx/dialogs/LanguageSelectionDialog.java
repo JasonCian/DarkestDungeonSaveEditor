@@ -10,6 +10,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import de.robojumper.ddsavereader.i18n.Messages;
+
 import java.util.Locale;
 import java.util.prefs.Preferences;
 
@@ -94,7 +96,13 @@ public class LanguageSelectionDialog {
         root.getChildren().addAll(instructionLabel, languageComboBox, buttonBox);
         
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(getClass().getResource("/css/application.css").toExternalForm());
+        // 使用存在的CSS文件，或者移除CSS加载以避免错误
+        try {
+            scene.getStylesheets().add(getClass().getResource("/css/enhanced-editor.css").toExternalForm());
+        } catch (Exception e) {
+            // 如果CSS文件不存在，继续执行，不影响功能
+            System.out.println("CSS file not found, using default styling");
+        }
         dialogStage.setScene(scene);
     }
     
@@ -110,7 +118,13 @@ public class LanguageSelectionDialog {
             prefs.put(LANGUAGE_PREFERENCE_KEY, languageCode);
             
             // 设置JVM的默认语言环境
-            Locale.setDefault(selectedItem.getLocale());
+            Locale newLocale = selectedItem.getLocale();
+            Locale.setDefault(newLocale);
+            
+            // 更新Messages类的ResourceBundle
+            Messages.setLocale(newLocale);
+            
+            System.out.println("Language changed to: " + selectedItem.getDisplayName() + " (" + languageCode + ")");
         }
     }
     
@@ -124,7 +138,13 @@ public class LanguageSelectionDialog {
         // 根据保存的语言设置设置JVM的默认语言环境
         for (LanguageItem item : LANGUAGES) {
             if (item.getCode().equals(savedLanguage)) {
-                Locale.setDefault(item.getLocale());
+                Locale newLocale = item.getLocale();
+                Locale.setDefault(newLocale);
+                
+                // 更新Messages类的ResourceBundle
+                Messages.setLocale(newLocale);
+                
+                System.out.println("Initialized language: " + item.getDisplayName() + " (" + savedLanguage + ")");
                 break;
             }
         }
