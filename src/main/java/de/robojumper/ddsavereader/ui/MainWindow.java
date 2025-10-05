@@ -52,8 +52,10 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 
 import de.robojumper.ddsavereader.BuildConfig;
+import de.robojumper.ddsavereader.i18n.Messages;
 import de.robojumper.ddsavereader.spreadsheets.SpreadsheetsService;
 import de.robojumper.ddsavereader.spreadsheets.SpreadsheetsService.SheetUpdater;
+import de.robojumper.ddsavereader.ui.LanguageSelectionDialog;
 import de.robojumper.ddsavereader.ui.State.SaveFile;
 import de.robojumper.ddsavereader.ui.State.Status;
 import de.robojumper.ddsavereader.updatechecker.UpdateChecker;
@@ -145,15 +147,15 @@ public class MainWindow {
         JMenuBar menuBar = new JMenuBar();
         frame.getContentPane().add(menuBar, BorderLayout.NORTH);
 
-        JMenu fileMenu = new JMenu("File");
+        JMenu fileMenu = new JMenu(Messages.getString("menu.file"));
         menuBar.add(fileMenu);
 
-        JMenuItem mntmExit = new JMenuItem("Exit");
+        JMenuItem mntmExit = new JMenuItem(Messages.getString("menu.file.exit"));
         mntmExit.addActionListener(e -> {
             attemptExit();
         });
 
-        JMenuItem mntmOpenBackupDirectory = new JMenuItem("Open Backup Directory");
+        JMenuItem mntmOpenBackupDirectory = new JMenuItem(Messages.getString("menu.file.openBackupDirectory"));
         mntmOpenBackupDirectory.addActionListener(e -> {
             try {
                 Desktop.getDesktop().open(new File(state.getBackupPath()));
@@ -164,10 +166,10 @@ public class MainWindow {
         fileMenu.add(mntmOpenBackupDirectory);
         fileMenu.add(mntmExit);
 
-        JMenu mnTools = new JMenu("Tools");
+        JMenu mnTools = new JMenu(Messages.getString("menu.tools"));
         menuBar.add(mnTools);
 
-        mntmNames = new JMenuItem("Generate Name File...");
+        mntmNames = new JMenuItem(Messages.getString("menu.tools.generateNameFile"));
         mntmNames.addActionListener(e -> {
             if (confirmLoseChanges()) {
                 new DataPathsDialog(frame, state.getGameDir(), state.getModsDir(), state, false);
@@ -178,7 +180,7 @@ public class MainWindow {
         });
         mnTools.add(mntmNames);
 
-        mntmSpreadsheets = new JMenuItem("Spreadsheets");
+        mntmSpreadsheets = new JMenuItem(Messages.getString("menu.tools.spreadsheets"));
         mntmSpreadsheets.setEnabled(false);
         mntmSpreadsheets.addActionListener(e -> {
             if (state.getSaveStatus() != Status.ERROR) {
@@ -187,10 +189,10 @@ public class MainWindow {
                     final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
                     Credential cred = SpreadsheetsService.getCredentials(HTTP_TRANSPORT);
                     if (cred == null) {
-                        Object[] options = { "OK", "Go to GitHub ReadMe" };
+                        Object[] options = { Messages.getString("button.ok"), Messages.getString("button.goToReadme") };
                         int openInstructions = JOptionPane.showOptionDialog(frame,
-                                "It seems like the Spreadsheet application wasn't set up. See the Readme file for instructions!",
-                                "Error", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
+                                Messages.getString("error.spreadsheetNotSetup"),
+                                Messages.getString("error.errorTitle"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
                                 options[0]);
                         switch (openInstructions) {
                         case 0:
@@ -205,7 +207,7 @@ public class MainWindow {
                         }
                         return;
                     }
-                    String sheetID = JOptionPane.showInputDialog(frame, "Set Spreadsheet ID", state.getLastSheetID());
+                    String sheetID = JOptionPane.showInputDialog(frame, Messages.getString("dialog.setSpreadsheetId"), state.getLastSheetID());
                     if (sheetID != null) {
                         state.setLastSheetID(sheetID);
                         sheetUpdater = SpreadsheetsService.makeUpdaterRunnable(sheetID, state.getSaveDir(), cred,
@@ -214,14 +216,14 @@ public class MainWindow {
                         return;
                     }
                 } catch (IOException | GeneralSecurityException e1) {
-                    JOptionPane.showMessageDialog(null, "An unknown error occurred.", "Spreadsheets",
+                    JOptionPane.showMessageDialog(null, Messages.getString("error.unknownError"), Messages.getString("menu.tools.spreadsheets"),
                             JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
                 final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-                JLabel runningLabel = new JLabel("Running... click OK to cancel!");
+                JLabel runningLabel = new JLabel(Messages.getString("status.running"));
                 ScheduledFuture<?> future = scheduler.scheduleAtFixedRate(new Runnable() {
 
                     @Override
@@ -229,7 +231,7 @@ public class MainWindow {
                         if (sheetUpdater.isRunning()) {
                             sheetUpdater.run();
                         } else {
-                            runningLabel.setText("Stopped!");
+                            runningLabel.setText(Messages.getString("status.stopped"));
                         }
                     }
                 }, 3, 120, TimeUnit.SECONDS);
@@ -245,16 +247,28 @@ public class MainWindow {
         });
         mnTools.add(mntmSpreadsheets);
 
-        JMenu mnHelp = new JMenu("Help");
+        JMenu mnHelp = new JMenu(Messages.getString("menu.help"));
         menuBar.add(mnHelp);
 
-        JMenuItem mntmAbout = new JMenuItem("About");
+        JMenuItem mntmLanguage = new JMenuItem("Language / 语言");
+        mntmLanguage.addActionListener(e -> {
+            LanguageSelectionDialog langDialog = new LanguageSelectionDialog(frame);
+            if (langDialog.showDialog()) {
+                langDialog.saveLanguagePreference();
+                JOptionPane.showMessageDialog(frame, 
+                    "Language will be applied after restart.\n语言将在重启后生效。",
+                    "Language / 语言", 
+                    JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        mnHelp.add(mntmLanguage);
+
+        JMenuItem mntmAbout = new JMenuItem(Messages.getString("menu.help.about"));
         mntmAbout.addActionListener(e -> {
-            Object[] options = { "OK", "Go to GitHub Page" };
+            Object[] options = { Messages.getString("button.ok"), Messages.getString("button.goToGitHub") };
             int result = JOptionPane.showOptionDialog(frame,
-                    BuildConfig.DISPLAY_NAME + " " + BuildConfig.VERSION + "\nBy: /u/robojumper\nGitHub: "
-                            + BuildConfig.GITHUB_URL,
-                    "About", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                    Messages.getString("dialog.aboutMessage", BuildConfig.DISPLAY_NAME, BuildConfig.VERSION, BuildConfig.GITHUB_URL),
+                    Messages.getString("dialog.aboutTitle"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
             switch (result) {
             case 0:
                 break;
@@ -271,17 +285,16 @@ public class MainWindow {
         Component horizontalGlue_1 = Box.createHorizontalGlue();
         menuBar.add(horizontalGlue_1);
 
-        btnNewUpdateAvailable = new JButton("New Update Available...");
+        btnNewUpdateAvailable = new JButton(Messages.getString("button.newUpdateAvailable"));
         btnNewUpdateAvailable.setVisible(false);
         btnNewUpdateAvailable.setEnabled(false);
         btnNewUpdateAvailable.addActionListener(e -> {
             if (latestRelease != null) {
                 Version curr = new Version(BuildConfig.VERSION);
-                Object[] options = { "OK", "Go to Releases Page" };
+                Object[] options = { Messages.getString("button.ok"), Messages.getString("button.goToReleases") };
                 int openInstructions = JOptionPane.showOptionDialog(frame,
-                        "There are updates available!\nCurrent version: " + curr.toString() + ", new version: "
-                                + latestRelease.version.toString(),
-                        "Update available", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
+                        Messages.getString("dialog.updateAvailableMessage", curr.toString(), latestRelease.version.toString()),
+                        Messages.getString("dialog.updateAvailableTitle"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
                         options[1]);
                 switch (openInstructions) {
                 case 0:
@@ -306,7 +319,7 @@ public class MainWindow {
         inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.PAGE_AXIS));
 
         JPanel savePathPanel = new JPanel();
-        savePathPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Save File Directory",
+        savePathPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), Messages.getString("panel.saveFileDirectory"),
                 TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
         inputPanel.add(savePathPanel);
         savePathPanel.setLayout(new BoxLayout(savePathPanel, BoxLayout.LINE_AXIS));
@@ -320,7 +333,7 @@ public class MainWindow {
         savePathPanel.add(savePathBox);
         savePathBox.setColumns(10);
 
-        JButton chooseSavePathButton = new JButton("Browse...");
+        JButton chooseSavePathButton = new JButton(Messages.getString("button.browse"));
         chooseSavePathButton.addActionListener(e -> {
             if (confirmLoseChanges()) {
                 directoryChooser(state.getSaveDir(), s -> state.setSaveDir(s));
@@ -329,11 +342,11 @@ public class MainWindow {
             }
         });
 
-        makeBackupButton = new JButton("Make Backup...");
+        makeBackupButton = new JButton(Messages.getString("button.makeBackup"));
         makeBackupButton.setEnabled(false);
         makeBackupButton.addActionListener(e -> {
             if (state.getSaveStatus() != Status.ERROR) {
-                String result = JOptionPane.showInputDialog(frame, "Choose backup name",
+                String result = JOptionPane.showInputDialog(frame, Messages.getString("dialog.chooseBackupName"),
                         new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()));
                 if (result == null) {
                     return;
@@ -341,7 +354,7 @@ public class MainWindow {
                     result = result.replaceAll("[:\\\\/*?|<>]", "_");
                     if (state.hasBackup(result)) {
                         int confirmed = JOptionPane.showConfirmDialog(frame,
-                                "Backup " + result + " already exists. Overwrite?", "Backup already exists",
+                                Messages.getString("dialog.backupAlreadyExists", result), Messages.getString("dialog.backupAlreadyExistsTitle"),
                                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                         switch (confirmed) {
                         case JOptionPane.YES_OPTION:
@@ -357,11 +370,11 @@ public class MainWindow {
         });
         savePathPanel.add(makeBackupButton);
 
-        restoreBackupButton = new JButton("Load Backup...");
+        restoreBackupButton = new JButton(Messages.getString("button.loadBackup"));
         restoreBackupButton.addActionListener(e -> {
             if (state.getSaveStatus() != Status.ERROR && state.hasAnyBackups() && confirmLoseChanges()) {
                 String[] backups = state.getBackupNames().toArray(new String[0]);
-                Object result = JOptionPane.showInputDialog(frame, "Choose backup", "Restore",
+                Object result = JOptionPane.showInputDialog(frame, Messages.getString("dialog.restoreBackup"), Messages.getString("dialog.restoreBackupTitle"),
                         JOptionPane.OK_CANCEL_OPTION, null, backups, backups[0]);
                 if (result != null) {
                     state.restoreBackup((String) result);
@@ -390,7 +403,7 @@ public class MainWindow {
         frame.getContentPane().add(buttonPanel, BorderLayout.SOUTH);
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
 
-        discardChangesButton = new JButton("Discard File Changes");
+        discardChangesButton = new JButton(Messages.getString("button.discardFileChanges"));
         discardChangesButton.addActionListener(e -> {
             Component c = tabbedPane.getSelectedComponent();
             if (c != null) {
@@ -416,7 +429,7 @@ public class MainWindow {
         saveStatus.setIcon(Resources.OK_ICON);
         buttonPanel.add(saveStatus);
 
-        saveButton = new JButton("Save All Changes");
+        saveButton = new JButton(Messages.getString("button.saveAllChanges"));
         saveButton.addActionListener(e -> {
             if (state.canSave()) {
                 state.saveChanges();
@@ -426,7 +439,7 @@ public class MainWindow {
         });
         buttonPanel.add(saveButton);
 
-        reloadButton = new JButton("Reload All");
+        reloadButton = new JButton(Messages.getString("button.reloadAll"));
         reloadButton.addActionListener(e -> {
             if (confirmLoseChanges()) {
                 state.loadFiles();
@@ -568,9 +581,8 @@ public class MainWindow {
     protected boolean confirmLoseChanges() {
         if (state.getNumUnsavedChanges() > 0) {
             int result = JOptionPane.showConfirmDialog(frame,
-                    "You have " + state.getNumUnsavedChanges()
-                            + " unsaved changes! Are you sure you want to discard them?",
-                    "Discard Changes", JOptionPane.YES_NO_OPTION);
+                    Messages.getString("message.confirmLoseChanges"),
+                    Messages.getString("message.confirmLoseChangesTitle"), JOptionPane.YES_NO_OPTION);
             if (result == JOptionPane.NO_OPTION || result == JOptionPane.CLOSED_OPTION) {
                 return false;
             }

@@ -11,6 +11,10 @@ repositories {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+// 设置编码为UTF-8
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
 
 dependencies {
     testImplementation 'org.testng:testng:7.4.0'

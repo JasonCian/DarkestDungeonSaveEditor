@@ -32,6 +32,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import de.robojumper.ddsavereader.file.DsonTypes;
+import de.robojumper.ddsavereader.i18n.Messages;
 import de.robojumper.ddsavereader.util.Helpers;
 import de.robojumper.ddsavereader.util.ReadNames;
 
@@ -60,17 +61,16 @@ public class DataPathsDialog {
                 TitledBorder.TOP, null, new Color(0, 0, 0)));
         content.setLayout(new BoxLayout(content, BoxLayout.PAGE_AXIS));
 
-        content.add(new JLabel("You can point the save editor towards the game installation and your mods folder."));
-        content.add(new JLabel("This allows the editor to reverse some numbers into strings, i.e. \"jester\" instead of "
-                                + DsonTypes.stringHash("jester") + "."));
-        content.add(new JLabel("The data is cached, consider re-running this after game updates or new mod installation."));
-        content.add(new JLabel("Reach this dialogue any time via Tools -> Generate Name Files"));
+        content.add(new JLabel(Messages.getString("dataPaths.description1")));
+        content.add(new JLabel(Messages.getString("dataPaths.description2", DsonTypes.stringHash("jester"))));
+        content.add(new JLabel(Messages.getString("dataPaths.description3")));
+        content.add(new JLabel(Messages.getString("dataPaths.description4")));
 
         content.add(new JSeparator(SwingConstants.HORIZONTAL));
 
         JPanel gameDataPathPanel = new JPanel();
         gameDataPathPanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"),
-                "Game Data Directory (ends with DarkestDungeon)", TitledBorder.LEADING, TitledBorder.TOP, null,
+                Messages.getString("dataPaths.gameDataDirectory"), TitledBorder.LEADING, TitledBorder.TOP, null,
                 new Color(0, 0, 0)));
         gameDataPathPanel.setLayout(new BoxLayout(gameDataPathPanel, BoxLayout.LINE_AXIS));
 
@@ -100,7 +100,7 @@ public class DataPathsDialog {
 
         gameDataPathBox.getDocument().addDocumentListener(listener);
 
-        JButton chooseGamePathButton = new JButton("Browse...");
+        JButton chooseGamePathButton = new JButton(Messages.getString("dataPaths.browseGameData"));
         chooseGamePathButton.addActionListener(e -> {
             MainWindow.directoryChooser(state.getGameDir(), s -> this.gameDir = s);
             gameDataPathBox.setText(this.gameDir);
@@ -109,7 +109,7 @@ public class DataPathsDialog {
 
         JPanel workshopPathPanel = new JPanel();
         workshopPathPanel.setBorder(
-                new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Workshop Directory (ends with 262060)",
+                new TitledBorder(UIManager.getBorder("TitledBorder.border"), Messages.getString("dataPaths.workshopDirectory"),
                         TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
         workshopPathPanel.setLayout(new BoxLayout(workshopPathPanel, BoxLayout.LINE_AXIS));
 
@@ -120,7 +120,7 @@ public class DataPathsDialog {
         workshopPathBox.setText(modsDir);
         workshopPathBox.getDocument().addDocumentListener(listener);
 
-        JButton chooseWorkshopPathButton = new JButton("Browse...");
+        JButton chooseWorkshopPathButton = new JButton(Messages.getString("dataPaths.browseWorkshop"));
         chooseWorkshopPathButton.addActionListener(e -> {
             MainWindow.directoryChooser(state.getModsDir(), s -> this.modsDir = s);
             workshopPathBox.setText(this.modsDir);
@@ -137,13 +137,13 @@ public class DataPathsDialog {
         Component horizontalGlue = Box.createHorizontalGlue();
         buttonPanel.add(horizontalGlue);
 
-        okButton = new JButton("Scan Names");
+        okButton = new JButton(Messages.getString("dataPaths.generateNames"));
         okButton.addActionListener(e -> {
-            final JOptionPane optionPane = new JOptionPane("Loading names, please wait...",
+            final JOptionPane optionPane = new JOptionPane(Messages.getString("message.generating"),
                     JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[] {}, null);
 
             idial = new JDialog();
-            idial.setTitle("Loading...");
+            idial.setTitle(Messages.getString("message.generating"));
             idial.setModal(true);
 
             idial.setContentPane(optionPane);
@@ -164,13 +164,13 @@ public class DataPathsDialog {
         });
         buttonPanel.add(okButton);
 
-        cancelButton = new JButton(skipInsteadOfCancel ? "Skip" : "Cancel");
+        cancelButton = new JButton(skipInsteadOfCancel ? Messages.getString("dataPaths.skip") : Messages.getString("button.cancel"));
         cancelButton.addActionListener(e -> {
             dialog.dispose();
         });
         buttonPanel.add(cancelButton);
 
-        dialog = new JDialog(frame, "Choose Game Data Directories", true);
+        dialog = new JDialog(frame, Messages.getString("dataPaths.generateNames"), true);
         dialog.setLocationRelativeTo(frame);
         dialog.add(content);
         dialog.setResizable(false);
@@ -232,7 +232,7 @@ public class DataPathsDialog {
                 Files.write(CACHED_NAME_FILE.toPath(), result, StandardCharsets.UTF_8);
                 idial.dispose();
                 dialog.setAlwaysOnTop(false);
-                JOptionPane.showMessageDialog(frame, "Successfully read " + numRead + " names.", "Ok",
+                JOptionPane.showMessageDialog(frame, Messages.getString("message.done"), Messages.getString("button.ok"),
                         JOptionPane.INFORMATION_MESSAGE);
                 state.setGameDir(gamePath);
                 state.setModsDir(modsPath);
@@ -241,7 +241,7 @@ public class DataPathsDialog {
                 // display error
                 idial.dispose();
                 dialog.setAlwaysOnTop(false);
-                JOptionPane.showMessageDialog(DataPathsDialog.this.frame, ex.getMessage(), "Error opening file",
+                JOptionPane.showMessageDialog(DataPathsDialog.this.frame, ex.getMessage(), Messages.getString("error.errorTitle"),
                         JOptionPane.ERROR_MESSAGE);
             } finally {
                 frame.setCursor(Cursor.getDefaultCursor());
