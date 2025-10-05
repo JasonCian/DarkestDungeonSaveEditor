@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Implementation-Title: DarkestDungeonSaveEditor
+Implementation-Version: v0.0.72-zh_CN
+Main-Class: de.robojumper.ddsavereader.Main
+

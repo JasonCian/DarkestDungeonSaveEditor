@@ -89,13 +89,33 @@ task fatJar(type: Jar) {
     manifest {
         attributes 'Implementation-Title': project.name,
                 'Implementation-Version': project.version,
-                'Main-Class': mainClassName
+                'Main-Class': mainClassName,
+                'Class-Path': '.',
+                'Add-Opens': 'java.base/java.lang=ALL-UNNAMED java.base/java.util=ALL-UNNAMED java.desktop/java.awt=ALL-UNNAMED java.desktop/sun.awt=ALL-UNNAMED'
     }
-    setDuplicatesStrategy(DuplicatesStrategy.INCLUDE)
+    setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
     archiveBaseName = "$jarname"
     archiveFileName = "${jarname}.jar"
-    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    
+    // 确保包含JavaFX和所有运行时依赖
+    from { 
+        configurations.runtimeClasspath.collect { 
+            it.isDirectory() ? it : zipTree(it).matching {
+                exclude 'META-INF/MANIFEST.MF'
+                exclude 'META-INF/*.SF'
+                exclude 'META-INF/*.DSA'
+                exclude 'META-INF/*.RSA'
+            }
+        } 
+    }
     with jar
+    
+    // 添加启动时的JVM参数处理
+    doFirst {
+        println "Building fatJar with JavaFX modules included for double-click execution"
+        println "JavaFX version: ${javafx.version}"
+        println "JavaFX modules: ${javafx.modules}"
+    }
 }
 
 
