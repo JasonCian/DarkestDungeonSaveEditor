@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.robojumper.ddsavereader.ui.javafx.dialogs.SaveEditorDialog">
+   <children>
+      <Label text="简易存档编辑器" styleClass="h1" textAlignment="CENTER">
+         <VBox.margin>
+            <Insets bottom="20.0" left="10.0" right="10.0" top="10.0" />
+         </VBox.margin>
+      </Label>
+      
+      <TabPane fx:id="tabPane" prefHeight="500.0" prefWidth="600.0">
+         
+         <!-- 资源管理标签页 -->
+         <Tab fx:id="resourceTab" text="💰 资源管理" closable="false">
+            <content>
+               <ScrollPane fitToWidth="true">
+                  <content>
+                     <VBox spacing="15" style="-fx-padding: 20;">
+                        
+                        <Label text="游戏货币" styleClass="h2"/>
+                        
+                        <!-- 金钱 -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                           <Label text="金钱:" prefWidth="80"/>
+                           <TextField fx:id="goldField" prefWidth="100" promptText="0"/>
+                           <Button fx:id="maxGoldBtn" text="最大值" prefWidth="70" onAction="#setMaxGold"/>
+                           <Button fx:id="richModeBtn" text="土豪模式" prefWidth="70" onAction="#setRichMode"/>
+                           <Button fx:id="reasonableBtn" text="合理配置" prefWidth="70" onAction="#setReasonableResources"/>
+                           <Button fx:id="clearResourcesBtn" text="清空" prefWidth="50" onAction="#clearResources"/>
+                           <Button fx:id="saveResourcesBtn" text="保存" prefWidth="50" onAction="#saveResources"/>
+                           <Button fx:id="resetResourcesBtn" text="重置" prefWidth="50" onAction="#resetResources"/>
+                        </HBox>
+                        
+                        <Separator/>
+                        
+                        <Label text="珍贵物品" styleClass="h2"/>
+                        
+                        <!-- 胸像 -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                           <Label text="胸像:" prefWidth="80"/>
+                           <TextField fx:id="bustField" prefWidth="100" promptText="0"/>
+                           <Button text="最大值" prefWidth="70" onAction="#setMaxBust"/>
+                           <Label text="用于建造建筑的珍贵雕像"/>
+                        </HBox>
+                        
+                        <!-- 肖像 -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                           <Label text="肖像:" prefWidth="80"/>
+                           <TextField fx:id="portraitField" prefWidth="100" promptText="0"/>
+                           <Button text="最大值" prefWidth="70" onAction="#setMaxPortrait"/>
+                           <Label text="用于建造建筑的珍贵画作"/>
+                        </HBox>
+                        
+                        <!-- 契约 -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                           <Label text="契约:" prefWidth="80"/>
+                           <TextField fx:id="deedField" prefWidth="100" promptText="0"/>
+                           <Button text="最大值" prefWidth="70" onAction="#setMaxDeed"/>
+                           <Label text="用于建造建筑的重要文件"/>
+                        </HBox>
+                        
+                        <!-- 纹章 -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                           <Label text="纹章:" prefWidth="80"/>
+                           <TextField fx:id="crestField" prefWidth="100" promptText="0"/>
+                           <Button text="最大值" prefWidth="70" onAction="#setMaxCrest"/>
+                           <Label text="用于建造建筑的贵族徽记"/>
+                        </HBox>
+                        
+                        <!-- 碎片 -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                           <Label text="碎片:" prefWidth="80"/>
+                           <TextField fx:id="shardField" prefWidth="100" promptText="0"/>
+                           <Button text="最大值" prefWidth="70" onAction="#setMaxShard"/>
+                           <Label text="神秘的水晶碎片"/>
+                        </HBox>
+                        
+                     </VBox>
+                  </content>
+               </ScrollPane>
+            </content>
+         </Tab>
+         
+         <!-- 英雄编辑标签页 -->
+         <Tab fx:id="heroTab" text="⚔️ 英雄编辑" closable="false">
+            <content>
+               <ScrollPane fitToWidth="true">
+                  <content>
+                     <VBox spacing="15" style="-fx-padding: 20;">
+                        
+                        <Label text="英雄选择" styleClass="h2"/>
+                        
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                           <Label text="选择英雄:" prefWidth="80"/>
+                           <ComboBox fx:id="heroSelector" prefWidth="300" onAction="#onHeroSelected"/>
+                        </HBox>
+                        
+                        <Separator/>
+                        
+                        <Label text="基本信息" styleClass="h2"/>
+                        
+                        <!-- 英雄名字 -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                           <Label text="名字:" prefWidth="80"/>
+                           <TextField fx:id="heroNameField" prefWidth="150"/>
+                           <Button fx:id="randomNameBtn" text="随机名字" onAction="#generateRandomName"/>
+                        </HBox>
+                        
+                        <!-- 生命值 -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                           <Label text="生命值:" prefWidth="80"/>
+                           <TextField fx:id="heroHpField" prefWidth="100"/>
+                           <Button fx:id="fullHealBtn" text="完全治愈" onAction="#fullHeal"/>
+                           <Button fx:id="healAllBtn" text="治愈所有" onAction="#healAllHeroes"/>
+                        </HBox>
+                        
+                        <!-- 压力值 -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                           <Label text="压力值:" prefWidth="80"/>
+                           <TextField fx:id="heroStressField" prefWidth="100"/>
+                           <Button fx:id="clearStressBtn" text="清除压力" onAction="#clearStress"/>
+                        </HBox>
+                        
+                        <Separator/>
+                        
+                        <Label text="装备升级" styleClass="h2"/>
+                        
+                        <!-- 武器等级 -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                           <Label text="武器等级:" prefWidth="80"/>
+                           <Spinner fx:id="weaponLevelSpinner" prefWidth="100"/>
+                           <Button fx:id="maxWeaponBtn" text="最高等级" onAction="#maxWeapon"/>
+                        </HBox>
+                        
+                        <!-- 护甲等级 -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                           <Label text="护甲等级:" prefWidth="80"/>
+                           <Spinner fx:id="armorLevelSpinner" prefWidth="100"/>
+                           <Button fx:id="maxArmorBtn" text="最高等级" onAction="#maxArmor"/>
+                        </HBox>
+                        
+                        <Separator/>
+                        
+                        <HBox spacing="10" alignment="CENTER">
+                           <Button fx:id="perfectHeroBtn" text="完美英雄" onAction="#makePerfectHero"/>
+                           <Button fx:id="resetHeroBtn" text="重置英雄" onAction="#resetHero"/>
+                           <Button fx:id="saveHeroBtn" text="保存修改" onAction="#saveHero"/>
+                           <Button fx:id="resetHeroChangesBtn" text="撤销修改" onAction="#resetHeroChanges"/>
+                        </HBox>
+                        
+                     </VBox>
+                  </content>
+               </ScrollPane>
+            </content>
+         </Tab>
+         
+         <!-- 游戏设置标签页 -->
+         <Tab fx:id="gameTab" text="⚙️ 游戏设置" closable="false">
+            <content>
+               <ScrollPane fitToWidth="true">
+                  <content>
+                     <VBox spacing="15" style="-fx-padding: 20;">
+                        
+                        <Label text="基本设置" styleClass="h2"/>
+                        
+                        <!-- 庄园名称 -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                           <Label text="庄园名称:" prefWidth="100"/>
+                           <TextField fx:id="estateNameField" prefWidth="200"/>
+                        </HBox>
+                        
+                        <!-- 游戏模式 -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                           <Label text="游戏模式:" prefWidth="100"/>
+                           <ComboBox fx:id="gameModeSelector" prefWidth="200"/>
+                        </HBox>
+                        
+                        <Separator/>
+                        
+                        <Label text="游戏选项" styleClass="h2"/>
+                        
+                        <VBox spacing="8">
+                           <CheckBox fx:id="questWarningsCheck" text="任务警告"/>
+                           <CheckBox fx:id="provisionWarningsCheck" text="补给警告"/>
+                           <CheckBox fx:id="corpsesCheck" text="尸体系统"/>
+                           <CheckBox fx:id="stallPenaltyCheck" text="拖延惩罚"/>
+                           <CheckBox fx:id="deathsDoorCheck" text="死亡之门"/>
+                        </VBox>
+                        
+                        <Separator/>
+                        
+                        <Label text="高级功能" styleClass="h2"/>
+                        
+                        <HBox spacing="10" alignment="CENTER">
+                           <Button fx:id="resetTamperingBtn" text="重置篡改检测" onAction="#resetTampering"/>
+                           <Button fx:id="unlockAchievementsBtn" text="解锁所有成就" onAction="#unlockAllAchievements"/>
+                        </HBox>
+                        
+                        <Separator/>
+                        
+                        <HBox spacing="10" alignment="CENTER">
+                           <Button fx:id="saveGameBtn" text="保存设置" onAction="#saveGameSettings"/>
+                           <Button fx:id="resetGameBtn" text="重置设置" onAction="#resetGameSettings"/>
+                        </HBox>
+                        
+                     </VBox>
+                  </content>
+               </ScrollPane>
+            </content>
+         </Tab>
+         
+      </TabPane>
+   </children>
+</VBox>

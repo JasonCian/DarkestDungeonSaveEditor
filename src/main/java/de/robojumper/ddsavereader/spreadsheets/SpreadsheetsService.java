@@ -63,6 +63,26 @@ public class SpreadsheetsService {
     private static final String COLS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     /**
+     * 检查Google Sheets凭据是否已配置
+     * @return true 如果凭据文件存在，false 否则
+     */
+    public static boolean isCredentialsConfigured() {
+        try {
+            // 检查本地文件
+            java.io.File localFile = new java.io.File("." + CLIENT_SECRET_DIR);
+            if (localFile.exists()) {
+                return true;
+            }
+            
+            // 检查资源文件
+            InputStream in = SpreadsheetsService.class.getResourceAsStream(CLIENT_SECRET_DIR);
+            return in != null;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
      * Creates an authorized Credential object.
      * 
      * @param HTTP_TRANSPORT The network HTTP Transport.

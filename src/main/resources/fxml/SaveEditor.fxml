@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<TabPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.robojumper.ddsavereader.ui.javafx.dialogs.SaveEditorDialog">
+   <tabs>
+      <!-- 资源管理选项卡 -->
+      <Tab fx:id="resourceTab" closable="false" text="💰 资源管理">
+         <content>
+            <VBox spacing="15.0">
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+               
+               <!-- 标题 -->
+               <Label text="游戏资源管理">
+                  <font>
+                     <Font name="System Bold" size="16.0" />
+                  </font>
+               </Label>
+               
+               <!-- 货币网格 -->
+               <GridPane hgap="10.0" vgap="10.0">
+                  <columnConstraints>
+                     <ColumnConstraints hgrow="NEVER" minWidth="80.0" prefWidth="80.0" />
+                     <ColumnConstraints hgrow="ALWAYS" minWidth="100.0" prefWidth="120.0" />
+                     <ColumnConstraints hgrow="NEVER" minWidth="80.0" prefWidth="80.0" />
+                  </columnConstraints>
+                  
+                  <Label text="金币:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                  <TextField fx:id="goldField" promptText="999999" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                  <Button fx:id="maxGoldBtn" onAction="#setMaxGold" text="最大" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                  
+                  <Label text="半身像:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                  <TextField fx:id="bustField" promptText="999" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Button fx:id="maxBustBtn" onAction="#setMaxBust" text="最大" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  
+                  <Label text="肖像:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                  <TextField fx:id="portraitField" promptText="999" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Button fx:id="maxPortraitBtn" onAction="#setMaxPortrait" text="最大" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                  
+                  <Label text="契约:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                  <TextField fx:id="deedField" promptText="999" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Button fx:id="maxDeedBtn" onAction="#setMaxDeed" text="最大" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                  
+                  <Label text="纹章:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                  <TextField fx:id="crestField" promptText="999" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <Button fx:id="maxCrestBtn" onAction="#setMaxCrest" text="最大" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                  
+                  <Label text="碎片:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                  <TextField fx:id="shardField" promptText="999" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                  <Button fx:id="maxShardBtn" onAction="#setMaxShard" text="最大" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+               </GridPane>
+               
+               <!-- 快速操作按钮 -->
+               <Label text="快速操作:">
+                  <font>
+                     <Font name="System Bold" size="14.0" />
+                  </font>
+               </Label>
+               
+               <HBox spacing="10.0">
+                  <Button fx:id="richModeBtn" onAction="#setRichMode" text="💰 土豪模式" />
+                  <Button fx:id="reasonableBtn" onAction="#setReasonableResources" text="⚖️ 合理配置" />
+                  <Button fx:id="clearResourcesBtn" onAction="#clearResources" text="🧹 清空资源" />
+               </HBox>
+               
+               <Separator />
+               
+               <!-- 保存按钮 -->
+               <HBox spacing="10.0">
+                  <Button fx:id="saveResourcesBtn" onAction="#saveResources" text="💾 保存资源修改" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" />
+                  <Button fx:id="resetResourcesBtn" onAction="#resetResources" text="🔄 重置" />
+               </HBox>
+            </VBox>
+         </content>
+      </Tab>
+      
+      <!-- 英雄编辑选项卡 -->
+      <Tab fx:id="heroTab" closable="false" text="👥 英雄编辑">
+         <content>
+            <VBox spacing="15.0">
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+               
+               <!-- 英雄选择 -->
+               <Label text="英雄选择">
+                  <font>
+                     <Font name="System Bold" size="16.0" />
+                  </font>
+               </Label>
+               
+               <ComboBox fx:id="heroSelector" onAction="#onHeroSelected" prefWidth="300.0" promptText="选择要编辑的英雄..." />
+               
+               <!-- 英雄属性编辑 -->
+               <GridPane hgap="10.0" vgap="10.0">
+                  <columnConstraints>
+                     <ColumnConstraints hgrow="NEVER" minWidth="80.0" prefWidth="80.0" />
+                     <ColumnConstraints hgrow="ALWAYS" minWidth="150.0" prefWidth="150.0" />
+                     <ColumnConstraints hgrow="NEVER" minWidth="100.0" prefWidth="100.0" />
+                  </columnConstraints>
+                  
+                  <Label text="姓名:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                  <TextField fx:id="heroNameField" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                  <Button fx:id="randomNameBtn" onAction="#generateRandomName" text="🎲 随机" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                  
+                  <Label text="生命值:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                  <TextField fx:id="heroHpField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Button fx:id="fullHealBtn" onAction="#fullHeal" text="💚 满血" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  
+                  <Label text="压力值:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                  <TextField fx:id="heroStressField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Button fx:id="clearStressBtn" onAction="#clearStress" text="😌 清零" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                  
+                  <Label text="武器等级:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                  <Spinner fx:id="weaponLevelSpinner" max="4" min="0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Button fx:id="maxWeaponBtn" onAction="#maxWeapon" text="⚔️ 最高" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                  
+                  <Label text="护甲等级:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                  <Spinner fx:id="armorLevelSpinner" max="4" min="0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <Button fx:id="maxArmorBtn" onAction="#maxArmor" text="🛡️ 最高" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+               </GridPane>
+               
+               <!-- 快速英雄操作 -->
+               <Label text="快速操作:">
+                  <font>
+                     <Font name="System Bold" size="14.0" />
+                  </font>
+               </Label>
+               
+               <HBox spacing="10.0">
+                  <Button fx:id="perfectHeroBtn" onAction="#makePerfectHero" text="✨ 完美英雄" />
+                  <Button fx:id="resetHeroBtn" onAction="#resetHero" text="🔄 重置英雄" />
+                  <Button fx:id="healAllBtn" onAction="#healAllHeroes" text="💚 治疗所有" />
+               </HBox>
+               
+               <Separator />
+               
+               <!-- 保存按钮 -->
+               <HBox spacing="10.0">
+                  <Button fx:id="saveHeroBtn" onAction="#saveHero" text="💾 保存英雄修改" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" />
+                  <Button fx:id="resetHeroChangesBtn" onAction="#resetHeroChanges" text="🔄 重置" />
+               </HBox>
+            </VBox>
+         </content>
+      </Tab>
+      
+      <!-- 游戏设置选项卡 -->
+      <Tab fx:id="gameTab" closable="false" text="⚙️ 游戏设置">
+         <content>
+            <VBox spacing="15.0">
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+               
+               <!-- 基本设置 -->
+               <Label text="庄园设置">
+                  <font>
+                     <Font name="System Bold" size="16.0" />
+                  </font>
+               </Label>
+               
+               <GridPane hgap="10.0" vgap="10.0">
+                  <columnConstraints>
+                     <ColumnConstraints hgrow="NEVER" minWidth="80.0" prefWidth="80.0" />
+                     <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" prefWidth="200.0" />
+                  </columnConstraints>
+                  
+                  <Label text="庄园名称:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                  <TextField fx:id="estateNameField" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                  
+                  <Label text="游戏模式:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                  <ComboBox fx:id="gameModeSelector" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+               </GridPane>
+               
+               <!-- 游戏选项 -->
+               <Label text="游戏选项">
+                  <font>
+                     <Font name="System Bold" size="14.0" />
+                  </font>
+               </Label>
+               
+               <VBox spacing="5.0">
+                  <CheckBox fx:id="questWarningsCheck" text="任务选择警告" />
+                  <CheckBox fx:id="provisionWarningsCheck" text="补给警告" />
+                  <CheckBox fx:id="corpsesCheck" text="尸体系统" />
+                  <CheckBox fx:id="stallPenaltyCheck" text="拖延惩罚" />
+                  <CheckBox fx:id="deathsDoorCheck" text="死门回复减益" />
+               </VBox>
+               
+               <!-- 危险操作 -->
+               <Label text="高级操作">
+                  <font>
+                     <Font name="System Bold" size="14.0" />
+                  </font>
+               </Label>
+               
+               <HBox spacing="10.0">
+                  <Button fx:id="resetTamperingBtn" onAction="#resetTampering" text="🔓 重置篡改检测" />
+                  <Button fx:id="unlockAchievementsBtn" onAction="#unlockAllAchievements" text="🏆 解锁所有成就" />
+               </HBox>
+               
+               <Separator />
+               
+               <!-- 保存按钮 -->
+               <HBox spacing="10.0">
+                  <Button fx:id="saveGameBtn" onAction="#saveGameSettings" text="💾 保存游戏设置" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" />
+                  <Button fx:id="resetGameBtn" onAction="#resetGameSettings" text="🔄 重置" />
+               </HBox>
+            </VBox>
+         </content>
+      </Tab>
+   </tabs>
+</TabPane>

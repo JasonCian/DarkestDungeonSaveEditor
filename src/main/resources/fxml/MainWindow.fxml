@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="root" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.robojumper.ddsavereader.ui.javafx.MainWindowController">
+   <children>
+      <!-- 菜单栏 -->
+      <MenuBar fx:id="menuBar">
+         <menus>
+            <Menu fx:id="fileMenu" text="File">
+               <items>
+                  <MenuItem fx:id="openBackupDirMenuItem" text="Open Backup Directory" />
+                  <SeparatorMenuItem />
+                  <MenuItem fx:id="exitMenuItem" text="Exit" />
+               </items>
+            </Menu>
+            <Menu fx:id="toolsMenu" text="Tools">
+               <items>
+                  <MenuItem fx:id="generateNamesMenuItem" text="Generate Names File" />
+                  <MenuItem fx:id="spreadsheetsMenuItem" text="Spreadsheets" />
+                  <SeparatorMenuItem />
+                  <MenuItem fx:id="saveEditorMenuItem" text="简易存档编辑器" />
+               </items>
+            </Menu>
+            <Menu fx:id="helpMenu" text="Help">
+               <items>
+                  <MenuItem fx:id="languageMenuItem" text="Language" />
+                  <SeparatorMenuItem />
+                  <MenuItem fx:id="aboutMenuItem" text="About" />
+               </items>
+            </Menu>
+         </menus>
+      </MenuBar>
+      
+      <!-- 主内容区域 -->
+      <VBox VBox.vgrow="ALWAYS">
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+         
+         <!-- 保存文件路径区域 -->
+         <TitledPane collapsible="false" text="Save File Directory">
+            <content>
+               <VBox spacing="10.0">
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <Label fx:id="saveFileStatusLabel" />
+                     <TextField fx:id="savePathField" HBox.hgrow="ALWAYS" />
+                     <Button fx:id="browseSavePathButton" text="Browse..." />
+                  </HBox>
+                  <HBox spacing="10.0">
+                     <Button fx:id="makeBackupButton" text="Make Backup" />
+                     <Button fx:id="restoreBackupButton" text="Restore Backup" />
+                     <Region HBox.hgrow="ALWAYS" />
+                     <Button fx:id="updateAvailableButton" text="Update Available" visible="false" />
+                  </HBox>
+               </VBox>
+            </content>
+         </TitledPane>
+         
+         <!-- 文件编辑区域 -->
+         <TabPane fx:id="fileTabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+            <VBox.margin>
+               <Insets top="10.0" />
+            </VBox.margin>
+         </TabPane>
+         
+         <!-- 底部按钮和状态区域 -->
+         <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <VBox.margin>
+               <Insets top="10.0" />
+            </VBox.margin>
+            <Button fx:id="discardChangesButton" text="Discard Changes" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Label fx:id="errorLabel" style="-fx-text-fill: red;" />
+            <Label fx:id="saveStatusLabel" />
+            <Button fx:id="saveAllButton" text="Save All" />
+            <Button fx:id="reloadAllButton" text="Reload All" />
+         </HBox>
+      </VBox>
+   </children>
+</VBox>

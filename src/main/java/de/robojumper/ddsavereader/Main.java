@@ -2,17 +2,17 @@ package de.robojumper.ddsavereader;
 
 import de.robojumper.ddsavereader.BuildConfig;
 import de.robojumper.ddsavereader.spreadsheets.SpreadsheetsService;
-import de.robojumper.ddsavereader.ui.LanguageSelectionDialog;
-import de.robojumper.ddsavereader.ui.MainWindow;
+import de.robojumper.ddsavereader.ui.javafx.DDSaveEditorApp;
 import de.robojumper.ddsavereader.util.ReadNames;
 
 public class Main {
     public static void main(String... args) {
         // 初始化语言设置
-        LanguageSelectionDialog.initializeLanguage();
+        de.robojumper.ddsavereader.ui.javafx.dialogs.LanguageSelectionDialog.initializeLanguage();
         
         if (args.length == 0) {
-            MainWindow.main(args);
+            // 使用JavaFX界面
+            DDSaveEditorApp.main(args);
         } else {
             String[] restArgs = new String[args.length - 1];
             System.arraycopy(args, 1, restArgs, 0, args.length - 1);
