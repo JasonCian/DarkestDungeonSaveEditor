@@ -375,22 +375,22 @@ public class MainWindowController implements Initializable {
         LanguageSelectionDialog dialog = new LanguageSelectionDialog(primaryStage);
         if (dialog.showAndWait()) {
             dialog.saveLanguagePreference();
-            
+
             // 刷新界面文本
             refreshUITexts();
-            
+
             // 刷新文件标签页标题
             refreshTabTitles();
-            
+
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Language / 语言");
             alert.setHeaderText(null);
-            alert.setContentText(Messages.getString("dialog.languageChanged", 
-                "Language has been changed successfully!\n语言已成功更改！\n\nSome text may require restart to take effect.\n某些文本可能需要重启才能生效。"));
+            alert.setContentText(Messages.getString("dialog.languageChanged",
+                    "Language has been changed successfully!\n语言已成功更改！\n\nSome text may require restart to take effect.\n某些文本可能需要重启才能生效。"));
             alert.showAndWait();
         }
     }
-    
+
     /**
      * 刷新界面中的所有文本
      */
@@ -416,11 +416,11 @@ public class MainWindowController implements Initializable {
         saveAllButton.setText(Messages.getString("button.saveAllChanges"));
         reloadAllButton.setText(Messages.getString("button.reloadAll"));
         updateAvailableButton.setText(Messages.getString("button.newUpdateAvailable"));
-        
+
         // 刷新状态标签
         updateSaveStatus();
     }
-    
+
     /**
      * 刷新标签页标题
      */
