@@ -379,10 +379,14 @@ public class MainWindowController implements Initializable {
             // 刷新界面文本
             refreshUITexts();
             
+            // 刷新文件标签页标题
+            refreshTabTitles();
+            
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Language / 语言");
             alert.setHeaderText(null);
-            alert.setContentText("Language has been changed successfully!\n语言已成功更改！\n\nSome text may require restart to take effect.\n某些文本可能需要重启才能生效。");
+            alert.setContentText(Messages.getString("dialog.languageChanged", 
+                "Language has been changed successfully!\n语言已成功更改！\n\nSome text may require restart to take effect.\n某些文本可能需要重启才能生效。"));
             alert.showAndWait();
         }
     }
@@ -415,6 +419,19 @@ public class MainWindowController implements Initializable {
         
         // 刷新状态标签
         updateSaveStatus();
+    }
+    
+    /**
+     * 刷新标签页标题
+     */
+    private void refreshTabTitles() {
+        for (Tab tab : fileTabPane.getTabs()) {
+            if (tab.getUserData() instanceof String) {
+                String fileName = (String) tab.getUserData();
+                // 保持文件名不变，只是确保标签页能正确显示
+                tab.setText(fileName);
+            }
+        }
     }
 
     private void handleAbout(ActionEvent event) {

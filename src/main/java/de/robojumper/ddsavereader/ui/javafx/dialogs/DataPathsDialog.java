@@ -136,7 +136,12 @@ public class DataPathsDialog {
         root.getChildren().addAll(descBox, separator, pathGrid, buttonBox);
         
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(getClass().getResource("/css/application.css").toExternalForm());
+        // 加载CSS样式表，如果找不到则使用默认样式
+        try {
+            scene.getStylesheets().add(getClass().getResource("/css/enhanced-editor.css").toExternalForm());
+        } catch (Exception e) {
+            System.out.println("CSS file not found, using default styling for DataPathsDialog");
+        }
         dialogStage.setScene(scene);
     }
     
